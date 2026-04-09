@@ -25,23 +25,19 @@ export function Registration() {
     if (honeypot.trim() !== "") return;
     setIsSubmitting(true);
     const result = await submitInscription(formData);
-    if (result.channel === "googlesheets") {
+    if (result.ok) {
       toast.success(
-        "¡Inscripción registrada! Los datos se guardaron en la hoja CASB.",
+        "¡Registro confirmado! Tu inscripción se guardó correctamente en la hoja CASB.",
       );
       setFormData(emptyForm);
-    } else if (result.channel === "mailto") {
-      toast.success(
-        "Se abrió tu aplicación de correo con el mensaje listo para enviar. Si no se abre, escríbenos desde el pie de página.",
+    } else if (result.reason === "config") {
+      toast.error(
+        "El envío no está configurado en el sitio. Contacta al organizador del concurso.",
       );
-    } else if (result.channel === "web3forms") {
-      toast.success("¡Inscripción enviada! Te contactaremos pronto.");
-      setFormData(emptyForm);
     } else {
-      toast.success(
-        "¡Inscripción enviada! Revisa tu correo por si necesitas confirmar el envío.",
+      toast.error(
+        "No se pudo guardar el registro. Revisa tu conexión e inténtalo de nuevo.",
       );
-      setFormData(emptyForm);
     }
     setIsSubmitting(false);
   };
