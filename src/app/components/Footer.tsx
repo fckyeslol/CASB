@@ -9,7 +9,6 @@ const FOOTER_LINKS = [
   { id: "rules", label: "Reglas" },
   { id: "jury", label: "Jurado" },
   { id: "sponsors", label: "Sponsors" },
-  { id: "timeline", label: "Línea de tiempo" },
 ] as const;
 
 export function Footer() {

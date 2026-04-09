@@ -1,5 +1,5 @@
 import { site } from "../config/site";
-import { submitViaGoogleAppsScriptIframe } from "./googleSheetsSubmit";
+import { submitViaGoogleAppsScript } from "./googleSheetsSubmit";
 import type { InscriptionFields } from "./inscriptionTypes";
 
 export type { InscriptionFields };
@@ -95,7 +95,7 @@ export async function submitInscription(
 
   if (googleUrl && googleSecret) {
     try {
-      await submitViaGoogleAppsScriptIframe(fields, googleUrl, googleSecret);
+      await submitViaGoogleAppsScript(fields, googleUrl, googleSecret);
       return { channel: "googlesheets" };
     } catch {
       /* continuar con correo */

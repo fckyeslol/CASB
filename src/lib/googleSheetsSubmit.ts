@@ -1,14 +1,29 @@
 import type { InscriptionFields } from "./inscriptionTypes";
 
+function normalizeUrl(url: string): string {
+  return url.trim().replace(/\u200B/g, "").replace(/\r?\n/g, "");
+}
+
 /**
- * Envía los datos con un POST clásico (formulario) hacia un iframe oculto.
- * Así el navegador no aplica CORS como con fetch, y Google Apps Script recibe doPost(e).
+ * Envío con formulario POST hacia un iframe con nombre.
+ * Es más estable que fetch(..., { mode: "no-cors" }) hacia script.google.com:
+ * varios navegadores no entregan bien peticiones repetidas en no-cors y entonces
+ * doPost ni siquiera aparece en "Ejecuciones".
  */
-export function submitViaGoogleAppsScriptIframe(
+export function submitViaGoogleAppsScript(
   fields: InscriptionFields,
   scriptUrl: string,
   secret: string,
 ): Promise<void> {
+  const url = normalizeUrl(scriptUrl);
+  if (!url.startsWith("https://script.google.com/macros/s/")) {
+    return Promise.reject(
+      new Error(
+        "URL de Apps Script inválida (debe ser https://script.google.com/macros/s/.../exec)",
+      ),
+    );
+  }
+
   return new Promise((resolve, reject) => {
     const iframeName = `casb_gs_${Date.now()}`;
     const iframe = document.createElement("iframe");
@@ -43,15 +58,17 @@ export function submitViaGoogleAppsScriptIframe(
 
     iframe.onload = () => finish();
 
-    const fallbackTimer = window.setTimeout(() => finish(), 6000);
+    const fallbackTimer = window.setTimeout(() => finish(), 10000);
 
     document.body.appendChild(iframe);
 
     form = document.createElement("form");
     form.method = "POST";
-    form.action = scriptUrl;
+    form.action = url;
     form.target = iframeName;
     form.acceptCharset = "UTF-8";
+    form.enctype = "application/x-www-form-urlencoded";
+    form.encoding = "application/x-www-form-urlencoded";
 
     const add = (name: string, value: string) => {
       const input = document.createElement("input");
@@ -61,7 +78,7 @@ export function submitViaGoogleAppsScriptIframe(
       form!.appendChild(input);
     };
 
-    add("secret", secret);
+    add("secret", secret.trim());
     add("teamName", fields.teamName);
     add("school", fields.school);
     add("leader", fields.leader);

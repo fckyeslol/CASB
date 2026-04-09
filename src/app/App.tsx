@@ -7,7 +7,6 @@ import { Registration } from "./components/Registration";
 import { Rules } from "./components/Rules";
 import { Jury } from "./components/Jury";
 import { Sponsors } from "./components/Sponsors";
-import { Timeline } from "./components/Timeline";
 import { Footer } from "./components/Footer";
 
 export default function App() {
@@ -22,7 +21,6 @@ export default function App() {
       <Rules />
       <Jury />
       <Sponsors />
-      <Timeline />
       <Footer />
     </div>
   );

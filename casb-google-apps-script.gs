@@ -21,14 +21,39 @@ function doGet() {
   return ContentService.createTextOutput('CASB: aplicación web activa.');
 }
 
+/** Si e.parameter viene vacío (algunos clientes), parsea el cuerpo urlencoded. */
+function readPostParams_(e) {
+  var p = e.parameter;
+  if (p && Object.keys(p).length > 0) {
+    return p;
+  }
+  if (e.postData && e.postData.contents) {
+    var raw = String(e.postData.contents);
+    var out = {};
+    raw.split('&').forEach(function (pair) {
+      var i = pair.indexOf('=');
+      if (i === -1) return;
+      var k = decodeURIComponent(pair.substring(0, i).replace(/\+/g, ' '));
+      var v = decodeURIComponent(pair.substring(i + 1).replace(/\+/g, ' '));
+      out[k] = v;
+    });
+    return out;
+  }
+  return p || {};
+}
+
 function doPost(e) {
   try {
     var props = PropertiesService.getScriptProperties();
     var expectedSecret = props.getProperty('FORM_SECRET');
     var spreadsheetId = props.getProperty('SPREADSHEET_ID');
 
-    var p = e.parameter;
-    if (!expectedSecret || p.secret !== expectedSecret) {
+    var p = readPostParams_(e);
+    Logger.log('CASB doPost keys: ' + Object.keys(p).join(','));
+    var gotSecret = String(p.secret || '').trim();
+    var wantSecret = String(expectedSecret || '').trim();
+    if (!wantSecret || gotSecret !== wantSecret) {
+      Logger.log('CASB: secret no coincide o falta FORM_SECRET en propiedades');
       return HtmlService.createHtmlOutput('<html><body>Forbidden</body></html>');
     }
     if (!spreadsheetId) {
