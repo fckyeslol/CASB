@@ -1,0 +1,95 @@
+================================================================================
+CASB — Conectar el formulario del sitio con Google Sheets (Apps Script)
+================================================================================
+
+RESUMEN
+-------
+Cuando alguien envía el formulario de inscripción, el sitio hace un POST a tu
+"aplicación web" de Google Apps Script. Ese script escribe una fila en la hoja
+de cálculo, en la pestaña llamada CASB.
+
+Necesitas:
+  • Un Google Sheet (el archivo puede llamarse CASB u otro nombre).
+  • Un proyecto de Apps Script vinculado a tu cuenta.
+  • Dos valores secretos iguales en Apps Script y en el archivo .env del sitio.
+  • La URL de despliegue que termina en /exec
+
+
+PASO 1 — Crear el Google Sheet
+------------------------------
+1. Abre https://sheets.google.com y crea una hoja (por ejemplo "CASB").
+2. No hace falta crear la pestaña "CASB" a mano: el script la crea si no existe.
+3. Copia el ID del archivo desde la barra de direcciones:
+   https://docs.google.com/spreadsheets/d/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/edit
+   La parte larga entre /d/ y /edit es el SPREADSHEET_ID.
+
+
+PASO 2 — Crear el proyecto de Apps Script
+------------------------------------------
+1. Abre https://script.google.com
+2. Proyecto nuevo.
+3. Borra el código por defecto y pega TODO el contenido del archivo:
+   casb-google-apps-script.gs  (está en la carpeta del proyecto web)
+4. Guarda el proyecto (nombre ej. "CASB Inscripciones").
+
+
+PASO 3 — Propiedades del script (ID de la hoja + clave secreta)
+----------------------------------------------------------------
+1. En el editor de Apps Script: engranaje "Ajustes del proyecto" (o Proyecto).
+2. Sección "Propiedades del script" → "Añadir propiedad de script":
+   - Propiedad: SPREADSHEET_ID    Valor: (pega el ID del paso 1)
+   - Propiedad: FORM_SECRET       Valor: inventa una contraseña larga (ej. 32 caracteres aleatorios)
+3. Guarda.
+
+IMPORTANTE: El mismo valor de FORM_SECRET lo pondrás en el .env del sitio como
+VITE_GOOGLE_APPS_SCRIPT_SECRET. Así solo quien conozca esa clave puede enviar filas.
+
+
+PASO 4 — Autorizar y desplegar como aplicación web
+---------------------------------------------------
+1. En el editor, pulsa "Implementar" → "Nueva implementación".
+2. Tipo: "Aplicación web" (si no aparece, elige el engranaje al lado de "Seleccionar tipo").
+3. Configuración típica:
+   - Descripción: v1 (o lo que quieras)
+   - Ejecutar como: Yo (tu cuenta de Google)
+   - Quién tiene acceso: Cualquier usuario
+     (necesario para que el formulario público del sitio pueda enviar datos)
+4. Implementar.
+5. La primera vez Google pedirá revisar permisos: Acepta acceso a Hojas de cálculo.
+6. Copia la URL de la aplicación web. Debe verse así:
+   https://script.google.com/macros/s/AKfycb....../exec
+
+
+PASO 5 — Variables de entorno en el sitio (Vite)
+------------------------------------------------
+En la raíz del proyecto "Design CASB Event Website", crea o edita el archivo .env:
+
+  VITE_GOOGLE_APPS_SCRIPT_URL=https://script.google.com/macros/s/TU_ID_AQUI/exec
+  VITE_GOOGLE_APPS_SCRIPT_SECRET=la_misma_clave_que_FORM_SECRET
+
+Sin espacios alrededor del =. Reinicia "npm run dev" después de cambiar .env.
+
+En producción (Netlify, Vercel, etc.) define las mismas variables en el panel
+de configuración del hosting.
+
+
+PASO 6 — Probar
+---------------
+1. Abre el sitio, rellena el formulario y envía.
+2. Revisa la pestaña "CASB" en tu Google Sheet: debe aparecer una nueva fila
+   con Fecha, Equipo, Colegio, Líder, Email, Teléfono, Miembros.
+
+Si algo falla:
+  • Revisa que la URL termine en /exec (no /dev).
+  • Vuelve a "Implementar" si cambiaste el código (nueva versión).
+  • Comprueba que SPREADSHEET_ID y FORM_SECRET estén bien en propiedades del script.
+  • Comprueba que el .env coincida con FORM_SECRET.
+
+
+NOTA DE SEGURIDAD
+-----------------
+La clave FORM_SECRET viaja en el navegador (está en el bundle del sitio).
+Sirve para evitar spam casual; no es seguridad de nivel bancario. Para más
+control habría que usar un backend propio con la clave solo en el servidor.
+
+================================================================================
