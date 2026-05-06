@@ -1,5 +1,5 @@
-const APPS_SCRIPT_URL = import.meta.env.VITE_APPS_SCRIPT_URL as string;
-const FORM_SECRET = import.meta.env.VITE_FORM_SECRET as string;
+const APPS_SCRIPT_URL = import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL as string;
+const FORM_SECRET = import.meta.env.VITE_GOOGLE_APPS_SCRIPT_SECRET as string;
 
 export interface FormData {
   teamName: string;
