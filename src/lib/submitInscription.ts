@@ -1,29 +1,47 @@
-import { submitViaGoogleAppsScript } from "./googleSheetsSubmit";
-import type { InscriptionFields } from "./inscriptionTypes";
+const APPS_SCRIPT_URL = import.meta.env.VITE_APPS_SCRIPT_URL as string;
+const FORM_SECRET = import.meta.env.VITE_FORM_SECRET as string;
 
-export type { InscriptionFields };
+export interface FormData {
+  teamName: string;
+  school: string;
+  leader: string;
+  email: string;
+  phone: string;
+  members: string;
+}
 
-export type SubmitResult =
-  | { ok: true }
-  | { ok: false; reason: "config" | "send" };
+export interface SubmitResult {
+  ok: boolean;
+  reason?: "config" | "network" | "server";
+}
 
-/**
- * Solo Google Sheets (Apps Script). No correo, FormSubmit ni mailto.
- */
 export async function submitInscription(
-  fields: InscriptionFields,
+  formData: FormData,
 ): Promise<SubmitResult> {
-  const googleUrl = import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL?.trim();
-  const googleSecret = import.meta.env.VITE_GOOGLE_APPS_SCRIPT_SECRET?.trim();
-
-  if (!googleUrl || !googleSecret) {
+  if (!APPS_SCRIPT_URL || !FORM_SECRET) {
     return { ok: false, reason: "config" };
   }
 
+  const body = new URLSearchParams({
+    secret: FORM_SECRET,
+    teamName: formData.teamName,
+    school: formData.school,
+    leader: formData.leader,
+    email: formData.email,
+    phone: formData.phone,
+    members: formData.members,
+  });
+
   try {
-    await submitViaGoogleAppsScript(fields, googleUrl, googleSecret);
+    await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      body,
+      redirect: "follow",
+      mode: "no-cors",
+    });
     return { ok: true };
-  } catch {
-    return { ok: false, reason: "send" };
+  } catch (err) {
+    console.error("submitInscription error:", err);
+    return { ok: false, reason: "network" };
   }
 }
