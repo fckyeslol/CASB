@@ -4,6 +4,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { submitInscription } from "../../lib/submitInscription";
+import { motion } from "motion/react";
+
 
 const emptyForm = {
   teamName: "",
