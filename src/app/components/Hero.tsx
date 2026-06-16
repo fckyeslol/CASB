@@ -24,9 +24,9 @@ export function Hero() {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1761662826910-3a2480223933?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmVlbiUyMHN1c3RhaW5hYmxlJTIwY2l0eSUyMHVyYmFuJTIwbmF0dXJlfGVufDF8fHx8MTc3NTYyMjE1OXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-          alt="Sustainable City"
-          className="w-full h-full object-cover"
+          src="/equipo-3.jpg"
+          alt="Equipo CASB al atardecer en Barranquilla"
+          className="w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#2C5530]/80 via-[#2C5530]/60 to-[#2C5530]/80" />
       </div>

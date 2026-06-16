@@ -94,11 +94,42 @@ export function About() {
           </div>
           <div className="relative">
             <img
-              src="https://images.unsplash.com/photo-1758599668186-c47df67d025d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlYXJ0aCUyMGhhbmRzJTIwc3VzdGFpbmFiaWxpdHklMjBlbnZpcm9ubWVudHxlbnwxfHx8fDE3NzU2MjIxNjB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-              alt="Earth in hands"
-              className="rounded-3xl shadow-2xl"
+              src="/equipo-1.jpg"
+              alt="Equipo organizador de CASB"
+              className="rounded-3xl shadow-2xl w-full object-cover"
             />
             <div className="absolute -bottom-6 -right-6 w-48 h-48 bg-[#8FA988]/20 rounded-full blur-3xl -z-10" />
+          </div>
+        </motion.div>
+
+        {/* Galería del equipo */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 1 }}
+          className="mt-20"
+        >
+          <h3 className="text-3xl md:text-4xl mb-8 text-[#2C5530] text-center">
+            Nuestro equipo
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {["/equipo-1.jpg", "/equipo-2.jpg", "/equipo-3.jpg"].map(
+              (src, index) => (
+                <motion.div
+                  key={src}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                  transition={{ duration: 0.5, delay: 1.1 + index * 0.1 }}
+                  className="overflow-hidden rounded-3xl shadow-lg group"
+                >
+                  <img
+                    src={src}
+                    alt={`Equipo CASB ${index + 1}`}
+                    className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </motion.div>
+              )
+            )}
           </div>
         </motion.div>
       </div>
