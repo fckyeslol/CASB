@@ -6,7 +6,6 @@ import { Objectives } from "./components/Objectives";
 import { Registration } from "./components/Registration";
 import { Rules } from "./components/Rules";
 import { Jury } from "./components/Jury";
-import { Sponsors } from "./components/Sponsors";
 import { Footer } from "./components/Footer";
 
 export default function App() {
@@ -20,7 +19,6 @@ export default function App() {
       <Registration />
       <Rules />
       <Jury />
-      <Sponsors />
       <Footer />
     </div>
   );
